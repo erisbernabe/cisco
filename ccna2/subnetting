@@ -1,3 +1,5 @@
+sh ipv6 int brief | ex una
+
 d1
 conf t
 ipv6 unicast-routing

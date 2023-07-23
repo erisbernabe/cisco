@@ -1,3 +1,23 @@
+d1
+conf t
+ipv6 unicast-routing
+int vlan 25
+ ipv6 address face:face:cafe:fafa::f/64
+ ipv6 address baca:baca:cafe:fafa::f/64
+ ipv6 address autoconfig
+end
+
+s1
+conf t
+ipv6 unicast-routing
+int e1/0
+ ipv6 address face:face:cafe:fafa::f/64
+ ipv6 address baca:baca:cafe:fafa::f/64
+ ipv6 address autoconfig
+end
+
+------------------------------
+
 !D1
 conf t
  vlan 25
@@ -23,7 +43,7 @@ int e1/0
  do sh ip int brief | ex una
 ----------------------------
 
-!D1
+!D2
 conf t
  vlan 26
  name webserver.com

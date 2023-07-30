@@ -17,6 +17,7 @@ dnf install python3-netaddr -y
 
 ansible-galaxy collection install cisco.ios
 
+sudo su
 git clone https://github.com/rivan16/rivan41ansible.git
 ***********************************************************
 

@@ -1,0 +1,125 @@
+****Exam lab 1
+
+conf t
+line vty 0 14
+exec-timeout 0 0
+ip dhcp excluded-add 192.168.102.1 192.168.102.150
+ip dhcp pool pool2
+network 192.168.102.0 255.255.255.0
+default-router 192.168.102.8
+domain-name rivanit.com
+dns-server 8.8.8.8
+ex
+int gi 2
+no shut
+
+ip add 192.168.102.8 255.255.255.0
+int gi 3
+no shut
+ip add 192.168.103.8 255.255.255.0
+end
+
+give static IP in linux
+sudo ifconfig eth0 192.168.103.88 netmask 255.255.255.0 up
+sudo route add default gw 192.168.103.8
+netstat -rn
+
+---------------
+
+********Exam lab 2
+create access list so that: 192.168.102.151 can ping
+
+192.168.102.151 can ping,ssh 192.168.103.8
+192.168.102.152 can web,https 192.168.103.8
+
+conf t
+no access-list 100
+access-list 100 permit icmp host 192.168.102.151 host 192.168.103.8
+access-list 100 permit tcp host 192.168.102.151 host 192.168.103.8 eq 22
+access-list 100 permit tcp host 192.168.102.152 host 192.168.103.8 eq 80
+access-list 100 permit tcp host 192.168.102.152 host 192.168.103.8 eq 443
+int gi 3
+ip access-group 100 OUT
+do sh ip access-list 100
+
+conf t
+int gi 3 
+no ip access-group 100 in
+end
+
+----------------
+
+lab 3: configure network address translation
+configure NAT so that all linux devices can have internet
+step 1: give fast internet to 5in1
+conf t
+ip route 0.0.0.0 0.0.0.0 192.168.108.2
+ip domain-lookup
+ip name-server 8.8.8.8 1.1.1.1
+do ping www.nba.com
+
+step2: create a standart ACL to allow all linux
+conf t
+access-list 5 permit 192.168.102.0 0.0.0.255
+access-list 5 permit 192.168.103.0 0.0.0.255
+
+step3: create a static NAT pool and overload:
+inside:local          inside:global
+192.168.102.151       192.168.108.69
+192.168.102.152       192.168.108.88
+192.168.103.8         192.168.108
+
+conf t
+ip nat inside source static 192.168.102.151 192.168.108.69
+ip nat inside source static 192.168.102.152 192.168.108.88
+ip nat inside source list 5 int gi 1 overload
+
+step 4: define NAT inside/outside
+conf t
+int gi 1
+IP NAT OUTSIDE
+int gi 2
+IP NAT inside
+int gi 3
+ip NAT INSIDE
+
+-----------
+
+********EXAM LAB 4:
+network time protocol
+configure your router to use american pacific standard time
+
+time server : time.google.com
+
+conf t
+ntp server cn.pool.ntp.org
+end
+sh ntp association
+sh clock
+
+---------
+
+******EXAM LAB 5
+TELNET IS BAD
+
+configure ssh
+conf t
+ip domain-name secure.com
+crypto key generate rsa
+???512 xxx, 1024
+ip ssh version 2
+username ssh privilege 15 secret pass
+line vty 0 14
+login local
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,293 @@
+conf t
+username admin privilege 15 secret pass
+ip http server
+ip http secure-server
+do wr
+
+--------------
+!sh run | inc access
+!access list 1 - 99
+!EDge
+conf t
+no access-list 2
+access-list 2 deny 10.11.0.0 0.0.255.255
+access-list 2 deny 10.12.0.0 0.0.255.255
+access-list 2 deny 10.21.0.0 0.0.255.255
+access-list 2 deny 10.22.0.0 0.0.255.255
+access-list 2 deny 10.31.0.0 0.0.255.255
+access-list 2 deny 10.32.0.0 0.0.255.255
+access-list 2 permit Any
+int gig0/0/1
+ip access-group 2 in
+do sh ip access-list 2
+
+!friends again
+conf t
+int gig0/0/1
+no ip access-group 1 in
+do sh ip access-list 1
+
+ex.1
+conf t
+no access-list 1
+access-list 1 deny 10.12.0.0 0.0.255.255
+access-list 1 deny 10.22.0.0 0.0.255.255
+access-list 1 deny 10.32.0.0 0.0.255.255
+access-list 1 deny 10.42.0.0 0.0.255.255
+access-list 1 deny 10.52.0.0 0.0.255.255
+access-list 1 deny 10.62.0.0 0.0.255.255
+access-list 1 permit Any
+int gig0/0/1
+ip access-group 1 in
+do sh ip access-list 1
+
+ex.3
+conf t
+no access-list 3
+access-list 3 deny 10.11.0.0 0.0.255.255
+access-list 3 deny 10.12.0.0 0.0.255.255
+access-list 3 deny 10.21.0.0 0.0.255.255
+access-list 3 deny 10.22.0.0 0.0.255.255
+access-list 3 deny 10.51.0.0 0.0.255.255
+access-list 3 deny 10.52.0.0 0.0.255.255
+access-list 3 deny 10.61.0.0 0.0.255.255
+access-list 3 deny 10.62.0.0 0.0.255.255
+access-list 3 permit Any
+int gig0/0/1
+ip access-group 3 in
+do sh ip access-list 3
+
+!if konti ang permit, dami deny:
+conf t
+access-list 4 permit 10.42.0.0 0.0.255.255
+int gig0/0/1
+ip access-group 4 in
+do sh ip access-list 4
+
+conf t
+int gig0/0/1
+no ip access-group 4 in
+do sh ip access-list 4
+
+ex5
+conf t
+access-list 5 permit 10.51.0.0 0.0.255.255
+access-list 5 permit 10.61.0.0 0.0.255.255
+int gig0/0/1
+ip access-group 5 in
+do sh ip access-list 5
+
+conf t
+int gig0/0/1
+no ip access-group 5 in
+do sh ip access-list 5
+
+---------------------------
+
+TASK4: HOW TO START A CAREER IN NETWORK CYBERSECURITY FOR FREE!!
+intentionally hackable websites
+1. Hack The Box
+2. CTFlearn
+3. bWAPP
+4. HackThisSite
+5. Google Gruyere
+6. Damn Vulnerable iOS App - DVIA
+7. Hellbound Hackers
+8. OWASP Mutillidae II
+9. HackThis!!
+
+task6: How to Make CUCM intentionally hackable to Learn
+the Basics for Firewalls.
+before: nmap -v 10.m.100.8
+@Cucm:
+config t
+int fa 0/0
+ ip add 10.41.100.8 255.255.255.0 Secondary
+service finger
+service tcp-small-servers
+service udp-small-servers
+ip dns server
+ip http server
+ip http secure-server
+!Make Ping EASY
+ip host pc 10.41.1.10
+ip host cm 10.41.100.9
+ip host cm2 10.41.100.8
+ip host p1 10.41.100.102
+ip host p2 10.41.100.101
+ip host sw 10.41.1.4
+ip host ed 10.41.41.1
+
+!CUCM
+conf t
+no access-list 100
+access-list 100 permit tcp Any host cm eq 80
+access-list 100 permit tcp Any host cm eq 23
+access-list 100 permit tcp Any host cm eq 2000
+access-list 100 permit tcp Any host cm2 eq 22
+access-list 100 permit tcp Any host cm2 eq 53
+access-list 100 permit tcp Any host cm2 eq 53
+int fa0/0
+ip access-group 100 in
+end
+
+
+conf t
+int fa0/0
+no ip access-group 100 in
+no ip access-group 101 in
+no ip access-group 102 in
+no ip access-group 104 in
+no ip access-group 105 in
+end
+
+
+conf t
+no access-list 101
+access-list 101 permit tcp Any host cm eq 22
+access-list 101 permit tcp Any host cm eq 53
+access-list 101 permit tcp Any host cm eq 2000
+access-list 101 permit udp Any host cm eq 53
+access-list 101 permit tcp Any host cm2 eq 80
+access-list 101 permit tcp Any host cm2 eq 443
+access-list 101 permit tcp Any host cm2 eq 79
+int fa0/0
+ip access-group 101 in
+end
+
+conf t
+no access-list 102
+access-list 102 permit tcp Any host cm eq 22
+access-list 102 permit tcp Any host cm eq 23
+access-list 102 permit tcp Any host cm2 eq 80
+access-list 102 permit tcp Any host cm2 eq 443
+access-list 102 permit tcp Any host cm2 eq 79
+access-list 102 permit tcp Any host cm2 eq 2000
+int fa0/0
+ip access-group 102 in
+end
+
+
+conf t
+no access-list 104
+access-list 104 permit tcp Any host cm eq 80
+access-list 104 permit tcp Any host cm eq 2000
+access-list 104 permit tcp Any host cm eq 53
+access-list 104 permit udp Any host cm eq 53
+access-list 104 permit icmp Any host cm
+access-list 104 permit tcp Any host cm2 eq 23
+access-list 104 permit tcp Any host cm2 eq 22
+access-list 104 permit tcp Any host cm2 eq 79
+access-list 104 permit tcp Any host cm2 eq 19
+int fa0/0
+ip access-group 104 in
+end
+
+Exam question use ACL 105
+create a firewall policy to allow these conditions:
+hackers: p1,p2,sw,pc victim: cm, cm2
+firewall policy
+- p1 can sccp cm
+- p2 can ping cm
+- pc can telnet, ssh, web cm
+- sw can ping, web cm
+
+7 lines
+
+conf t
+no access-list 105
+access-list 105 permit tcp host p1 host cm eq 2000
+access-list 105 permit icmp host p2 host cm
+access-list 105 permit tcp host pc host cm eq 23
+access-list 105 permit tcp host pc host cm eq 22
+access-list 105 permit tcp host pc host cm eq 80
+access-list 105 permit icmp host sw host cm
+access-list 105 permit tcp host sw host cm eq 80
+int fa0/0
+ip access-group 105 in
+do sh ip access-list 105
+end
+
+conf t
+no access-list 106
+access-list 106 permit icmp host p1 host cm2
+access-list 106 permit tcp host p2 host cm2 eq 2000
+access-list 106 permit tcp host pc host cm2 eq 53
+access-list 106 permit udp host pc host cm2 eq 53
+access-list 106 permit tcp host pc host cm2 eq 79
+access-list 106 permit tcp host pc host cm2 eq 5060
+access-list 106 permit icmp host 10.41.100.4 host cm2
+access-list 106 permit tcp host 10.41.100.4 host cm eq 80
+int fa0/0
+ip access-group 106 in
+do sh ip access-list 106
+end
+
+conf t
+int gig0/0/0
+no ip access-group 8 in
+no ip access-group 9 in
+end
+
+conf t
+access-list 8 permit 10.51.0.0 0.0.255.255
+access-list 8 permit 10.61.0.0 0.0.255.255
+int gig0/0/1
+ip access-group 8 in
+do sh ip access-list 8
+
+conf t
+access-list 9 permit 10.42.0.0 0.0.255.255
+access-list 9 permit 10.51.0.0 0.0.255.255
+access-list 9 permit 10.52.0.0 0.0.255.255
+access-list 9 permit 10.61.0.0 0.0.255.255
+access-list 9 permit 10.62.0.0 0.0.255.255
+int gig0/0/1
+ip access-group 9 in
+do sh ip access-list 9
+
+
+
+conf t
+int gig0/0/0 
+no ip access-group 9 in
+end
+
+---------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

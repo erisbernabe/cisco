@@ -1,0 +1,149 @@
+!!!802.1Q - Allowing of multiple vlan
+!!!802.1d - STP (spanning-tree protocol) enabling all trunk prevents loop
+!Broadcast storm looping of trunks
+
+!coretaas and baba
+!off ng spanning tree. causing problems on unmanaged switches
+conf t
+no spanning-tree vlan 1
+no spanning-tree vlan 100
+end
+
+!coretaas and baba
+!spanning tree is on by default
+conf t
+spanning-tree vlan 1
+spanning-tree vlan 100
+end
+
+!!sino magdedecide ng traffic ng multiple switches mo
+sh spanning-tree vlan 1
+
+!!switch taas mac address: f025.72e1.4600
+!!switch baba mac address: f025.72e9.2f80
+
+!!!!!!!!!!!!!!!!!!!!Election of root bridge/boss of switches
+1. bridge priority - by default 32768
+2. lowest mac address wins (mas mababa yung value)
+
+!!para babaan yung priority
+conf t
+spanning-tree vlan 1 priority 8192
+end
+
+!!no matter what happen ito na yung laging panalo na switch / pwede din secondary
+conf t
+spanning-tree vlan 1 root primary
+end
+
+!!!!!!!!!!!!!!!!!!!!!!!!sino ang priority na port na dadaanan nung trunk (lowest and panalo)
+1. port priority 128.(port no.)
+2. cost - giga (4) -fa(19)
+3. port number
+
+!!!!!!!!!!!!!!!!!!!!!802.1W - RSTP (rapid spanning-tree protocol)
+
+@@@@root bridge
+conf t
+spanning-tree mode rapid-pvst
+spanning-tree backbonefast
+int range fa0/1-8
+switchport mode access
+spanning-tree portfast
+end
+
+@@@@alalay
+conf t
+spanning-tree mode rapid-pvst
+spanning-tree uplinkfast
+int range fa0/1-8
+switchport mode access
+spanning-tree portfast
+end
+
+
+!!!!!!!!!!!!!!!!!PORT SECURITY
+@@Para makablock ng mac address and designated lang yung port na yun para sa isang PC
+conf t
+int fa0/1
+switchport port-security !!!enabling port sec
+switchport port-security mac-address sticky !!!(sticky pwede ilagay mac address)
+switchport port-security maximum 1 !!!ilan mac address tatandaan niya
+switchport port-security violation shutdown !!!3 violation (shutdown,protect,restrict)
+end
+sh port-security address
+sh int status err-disable
+
+
+@@para mabuhay ulit yung port na nakashutdown dahil sa mac address error
+conf t
+int fa0/1
+shut
+no sh
+end
+
+
+
+
+!!!!!!!!ETHERCHANNEL pagsasamahin yung tatlong trunk ng switch para bumilis at maging isa na lang
+conf t
+int range fa0/10-12
+shut
+channel-group 1 mode active
+channel-protocol lacp
+no shut
+int port-channel 1
+switchport trunk encapsulation dot1q
+switchport mode trunk
+end
+
+
+---------------------------
+
+conf t
+int range fa0/7-10
+switchport trunk encapsulation dot1q
+switchport mode trunk
+end
+
+!!CORE
+conf t
+int vlan 1
+no shut
+ip address 10.0.0.2 255.0.0.0
+do ping 10.0.0.1
+end
+conf t
+int fa0/12
+no switchport
+ip address 200.0.0.1 255.255.255.0
+end
+conf t
+ip routing
+router eigrp 100
+no auto-summary
+network 10.0.0.0
+network 200.0.0.0
+end
+
+@@@@@HSRP (HOT STANDBY ROUTING PROTOCOL)
+
+core2:
+conf t
+int vlan 1
+standby 1 ip 10.0.0.1
+standby 1 priority 100
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
